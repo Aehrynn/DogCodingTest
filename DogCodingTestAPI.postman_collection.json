@@ -1,0 +1,142 @@
+{
+	"info": {
+		"_postman_id": "bbeb9fd6-a748-4091-b89b-466394cecb85",
+		"name": "DogCodingTestAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "{{serverId}}/DogController/dogs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{serverId}}/DogController/dogs",
+					"host": [
+						"{{serverId}}"
+					],
+					"path": [
+						"DogController",
+						"dogs"
+					]
+				},
+				"description": "Get all dogs"
+			},
+			"response": []
+		},
+		{
+			"name": "{{serverId}}/DogController/dogs/{name}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{serverId}}/DogController/dogs/test3",
+					"host": [
+						"{{serverId}}"
+					],
+					"path": [
+						"DogController",
+						"dogs",
+						"test3"
+					]
+				},
+				"description": "Get a dog by name"
+			},
+			"response": []
+		},
+		{
+			"name": "{{serverId}}/DogController/dogs",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\" : \"test1\",\n\t\"types\" : [\"test1\", \"test2\", \"test3\"]\n}"
+				},
+				"url": {
+					"raw": "{{serverId}}/DogController/dogs?",
+					"host": [
+						"{{serverId}}"
+					],
+					"path": [
+						"DogController",
+						"dogs"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "test",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Create a dog\n\nName must not already be in use"
+			},
+			"response": []
+		},
+		{
+			"name": "{{serverId}}/DogController/dogs/{name}",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\" : \"test1\",\n\t\"types\" : [\"beethoven\", \"minstrel\"]\n}"
+				},
+				"url": {
+					"raw": "{{serverId}}/DogController/dogs/test1?",
+					"host": [
+						"{{serverId}}"
+					],
+					"path": [
+						"DogController",
+						"dogs",
+						"test1"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "test",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Update a dog\n\nName must not already be in use"
+			},
+			"response": []
+		},
+		{
+			"name": "{{serverId}}/DogController/dogs/{name}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{serverId}}/DogController/dogs/test1",
+					"host": [
+						"{{serverId}}"
+					],
+					"path": [
+						"DogController",
+						"dogs",
+						"test1"
+					]
+				},
+				"description": "Delete a dog"
+			},
+			"response": []
+		}
+	]
+}
