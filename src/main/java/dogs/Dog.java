@@ -2,6 +2,8 @@ package dogs;
 
 
 import com.google.gson.Gson;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -9,21 +11,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Gilmariand on 25/06/2018.
+ * Created by Erin Maguire on 25/06/2018.
  */
+
+@ApiModel(description = "Class representing a Dog.")
 @Entity
 public class Dog {
 
     @Id
     @GeneratedValue
+    @ApiModelProperty(notes = "Auto generated database id", hidden = true)
     private Long id;
 
     @Column(unique=true)
     @NotNull
+    @ApiModelProperty(notes = "Name of Dog", required = true)
     private String name;
 
     @Column(name="dog_types")
     @ElementCollection(targetClass=String.class)
+    @ApiModelProperty(notes = "List of Dog sub types")
     private List<String> types;
 
     public Dog() {
@@ -73,7 +80,7 @@ public class Dog {
     public String toString() {
 
         return "{" +
-                "name\":\"" + name + '\"' + "," + new Gson().toJson(types) +
+                "\"name\":\"" + name + '\"' + "," + new Gson().toJson(types) +
                 '}';
     }
 

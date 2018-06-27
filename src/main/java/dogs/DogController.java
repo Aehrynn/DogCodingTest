@@ -1,5 +1,8 @@
 package dogs;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,37 +17,32 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @RequestMapping("/DogController")
+@Api(description = "Class that contains the CRUD REST endpoints which handle the Dog object")
 public class DogController {
 
     @Autowired
     DogRepository dogRepository;
 
-
-
     @RequestMapping(value = "/dogs", method = GET)
+    @ApiOperation("Returns all the dogs and there sub types in the database")
     public ResponseEntity<?> getDogs() {
         List<Dog> allDogs = dogRepository.findAll();
-        //TODO convert to JSON
         return new ResponseEntity<>(allDogs.toString(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/dogs/import", method = POST)
-    public void importDogs() {
-         //TODO put something in here to use the supplied JSON
-    }
-
     @RequestMapping(value = "/dogs/{name}", method = GET)
-    public ResponseEntity<?> getDog(@PathVariable("name") String dogName) {
+    @ApiOperation("Returns a dog and it's sub types in the database")
+    public ResponseEntity<?> getDog(@ApiParam("Name of the dog to retrieve") @PathVariable("name") String dogName) {
         Dog aDog = dogRepository.findByName(dogName);
         if (aDog != null) {
-            //TODO convert to json
             return new ResponseEntity<>(aDog.toString(), HttpStatus.OK);
         }
         return new ResponseEntity<>("No Dog found with that id", HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(value = "/dogs/{name}", method = PUT)
-    public ResponseEntity<?> updateDog(@PathVariable("name") String dogName, @RequestBody Dog updateDog) {
+    @ApiOperation("Update a dog and it's sub types in the database")
+    public ResponseEntity<?> updateDog(@ApiParam("Name of the dog to update") @PathVariable("name") String dogName, @ApiParam("JSON representation of the dog object to update a dog") @RequestBody Dog updateDog) {
         Dog aDog = dogRepository.findByName(dogName);
         if (aDog != null) {
             if (!aDog.getName().equals(updateDog.getName())) {
@@ -63,11 +61,12 @@ public class DogController {
             //convert to json
             return new ResponseEntity<>(aDog.toString(), HttpStatus.OK);
         }
-        return new ResponseEntity<>("No Dog found with that id", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("No Dog found with that name", HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(value = "/dogs", method = POST)
-    public ResponseEntity<?> createDog(@RequestBody Dog newDog) {
+    @ApiOperation("Creates a dog and it's sub types in the database")
+    public ResponseEntity<?> createDog(@ApiParam("JSON representation of the dog object to create a dog") @RequestBody Dog newDog) {
         Dog testDog = dogRepository.findByName(newDog.getName());
         if (testDog == null) {
             dogRepository.save(newDog);
@@ -78,13 +77,14 @@ public class DogController {
     }
 
     @RequestMapping(value = "/dogs/{name}", method = DELETE)
-    public ResponseEntity<?> deleteDog(@PathVariable("name") String dogName) {
+    @ApiOperation("Deletes a dog and it's sub types in the database")
+    public ResponseEntity<?> deleteDog(@ApiParam("Name of the dog to delete") @PathVariable("name") String dogName) {
         Dog aDog = dogRepository.findByName(dogName);
         if (aDog != null) {
             //convert to json
             dogRepository.delete(aDog);
             return new ResponseEntity<>("Deleted", HttpStatus.OK);
         }
-        return new ResponseEntity<>("No Dog found with that id", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("No Dog found with that name", HttpStatus.NOT_FOUND);
     }
 }
