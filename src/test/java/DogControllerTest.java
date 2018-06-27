@@ -1,3 +1,4 @@
+import com.google.gson.Gson;
 import dogs.Application;
 import dogs.Dog;
 import dogs.DogController;
@@ -67,7 +68,7 @@ public class DogControllerTest {
         MvcResult result = mockMvc.perform(get("/DogController/dogs"))
                 .andExpect(status().isOk()).andReturn();
 
-        Assert.assertEquals(dogs.toString(), result.getResponse().getContentAsString());
+        Assert.assertEquals(new Gson().toJson(dogs), result.getResponse().getContentAsString());
     }
 
     @Test
@@ -76,7 +77,7 @@ public class DogControllerTest {
         MvcResult result = mockMvc.perform(get("/DogController/dogs/pug"))
                 .andExpect(status().isOk()).andReturn();
 
-        Assert.assertEquals(firstDog.toString(), result.getResponse().getContentAsString());
+        Assert.assertEquals(new Gson().toJson(firstDog), result.getResponse().getContentAsString());
     }
 
     @Test
@@ -95,7 +96,7 @@ public class DogControllerTest {
         MvcResult result = mockMvc.perform(post("/DogController/dogs").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"labrador\"}"))
                 .andExpect(status().isCreated()).andReturn();
 
-        Assert.assertEquals("{\"name\":\"labrador\",[]}", result.getResponse().getContentAsString());
+        Assert.assertEquals("{\"name\":\"labrador\",\"types\":[]}", result.getResponse().getContentAsString());
     }
 
     @Test
@@ -106,7 +107,7 @@ public class DogControllerTest {
                 .content("{\"name\":\"labrador\",\"types\":[\"Black\",\"Chocolate\"]}"))
                 .andExpect(status().isCreated()).andReturn();
 
-        Assert.assertEquals("{\"name\":\"labrador\",[\"Black\",\"Chocolate\"]}", result.getResponse().getContentAsString());
+        Assert.assertEquals("{\"name\":\"labrador\",\"types\":[\"Black\",\"Chocolate\"]}", result.getResponse().getContentAsString());
     }
 
     @Test
@@ -144,7 +145,7 @@ public class DogControllerTest {
                 .content("{\"name\":\"pug\"}"))
                 .andExpect(status().isOk()).andReturn();
 
-        Assert.assertEquals(firstDog.toString(), result.getResponse().getContentAsString());
+        Assert.assertEquals(new Gson().toJson(firstDog), result.getResponse().getContentAsString());
     }
 
     @Test

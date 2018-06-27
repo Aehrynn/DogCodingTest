@@ -1,10 +1,13 @@
 package dogs;
 
+import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,8 +29,10 @@ public class DogController {
     @RequestMapping(value = "/dogs", method = GET)
     @ApiOperation("Returns all the dogs and there sub types in the database")
     public ResponseEntity<?> getDogs() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
         List<Dog> allDogs = dogRepository.findAll();
-        return new ResponseEntity<>(allDogs.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(new Gson().toJson(allDogs), headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/dogs/{name}", method = GET)
@@ -35,7 +40,7 @@ public class DogController {
     public ResponseEntity<?> getDog(@ApiParam("Name of the dog to retrieve") @PathVariable("name") String dogName) {
         Dog aDog = dogRepository.findByName(dogName);
         if (aDog != null) {
-            return new ResponseEntity<>(aDog.toString(), HttpStatus.OK);
+            return new ResponseEntity<>(new Gson().toJson(aDog), HttpStatus.OK);
         }
         return new ResponseEntity<>("No Dog found with that id", HttpStatus.NOT_FOUND);
     }
@@ -59,7 +64,7 @@ public class DogController {
             aDog.setTypes(updateDog.getTypes());
              dogRepository.save(aDog);
             //convert to json
-            return new ResponseEntity<>(aDog.toString(), HttpStatus.OK);
+            return new ResponseEntity<>(new Gson().toJson(aDog), HttpStatus.OK);
         }
         return new ResponseEntity<>("No Dog found with that name", HttpStatus.NOT_FOUND);
     }
@@ -70,7 +75,7 @@ public class DogController {
         Dog testDog = dogRepository.findByName(newDog.getName());
         if (testDog == null) {
             dogRepository.save(newDog);
-            return new ResponseEntity<>(newDog.toString(), HttpStatus.CREATED);
+            return new ResponseEntity<>(new Gson().toJson(newDog), HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>("Dog with that name already exists", HttpStatus.CONFLICT);
         }
