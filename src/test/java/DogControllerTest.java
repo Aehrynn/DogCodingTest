@@ -43,6 +43,7 @@ public class DogControllerTest {
     Dog firstDog;
     Dog secondDog;
     Dog thirdDog;
+    Dog fourthDog;
     List<String> dogTypes = new ArrayList<>();
 
     @Before
@@ -55,6 +56,8 @@ public class DogControllerTest {
         firstDog.setId(1L);
         thirdDog = new Dog("pug", new ArrayList<String>());
         thirdDog.setId(1L);
+        fourthDog = new Dog("pug", new ArrayList<String>());
+        fourthDog.setId(2L);
         dogTypes.add("border");
         dogTypes.add("long hair");
         secondDog = new Dog("collie", dogTypes);
@@ -69,6 +72,15 @@ public class DogControllerTest {
                 .andExpect(status().isOk()).andReturn();
 
         Assert.assertEquals(new Gson().toJson(dogs), result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void testExportDogs() throws Exception {
+        Mockito.when(dogRepository.findAll()).thenReturn(dogs);
+        MvcResult result = mockMvc.perform(get("/DogController/export"))
+                .andExpect(status().isOk()).andReturn();
+
+        Assert.assertEquals("{\"pug\":[],\"collie\":[\"border\",\"long hair\"]}", result.getResponse().getContentAsString());
     }
 
     @Test
@@ -158,14 +170,43 @@ public class DogControllerTest {
         Assert.assertEquals("No Dog found with that name", result.getResponse().getContentAsString());
     }
 
-//    @Test
-//    public void testUpdateADogNameAlreadyExists() throws Exception {
-//        Mockito.when(dogRepository.findByName("pug")).thenReturn(firstDog, thirdDog);
-//        Mockito.when(dogRepository.findByName("labrador")).thenReturn(firstDog, thirdDog);
-//        MvcResult result = mockMvc.perform(put("/DogController/dogs/pug").content("name=pug").contentType(MediaType.APPLICATION_JSON)
-//                .content("{\"name\":\"labrador\"}"))
-//                .andExpect(status().isConflict()).andReturn();
-//
-//        Assert.assertEquals("Dog with that name already exists", result.getResponse().getContentAsString());
-//    }
+    @Test
+    public void testUpdateADogNameAlreadyExists() throws Exception {
+        Mockito.when(dogRepository.findByName(Mockito.any())).thenReturn(firstDog, fourthDog);
+        MvcResult result = mockMvc.perform(put("/DogController/dogs/pug").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"labrador\"}"))
+                .andExpect(status().isConflict()).andReturn();
+
+        Assert.assertEquals("Dog with that name already exists", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void testUpdateADogNameAlreadyExistsButIsSameObject() throws Exception {
+        Mockito.when(dogRepository.findByName(Mockito.any())).thenReturn(firstDog, thirdDog);
+        MvcResult result = mockMvc.perform(put("/DogController/dogs/pug").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"labrador\"}"))
+                .andExpect(status().isOk()).andReturn();
+
+        Assert.assertEquals("{\"id\":1,\"name\":\"labrador\",\"types\":[]}", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void testImportDogs() throws Exception {
+        Mockito.when(dogRepository.findByName(Mockito.any())).thenReturn(null, null);
+        MvcResult result = mockMvc.perform(post("/DogController/import").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"pug\":[],\"collie\":[\"border\",\"long hair\"]}"))
+                .andExpect(status().isOk()).andReturn();
+
+        Assert.assertEquals("[{\"name\":\"pug\",\"types\":[]},{\"name\":\"collie\",\"types\":[\"border\",\"long hair\"]}]", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void testImportDogs_SomethingAlreadyExists() throws Exception {
+        Mockito.when(dogRepository.findByName(Mockito.any())).thenReturn(firstDog, null);
+        MvcResult result = mockMvc.perform(post("/DogController/import").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"pug\":[],\"collie\":[\"border\",\"long hair\"]}"))
+                .andExpect(status().isOk()).andReturn();
+
+        Assert.assertEquals("[{\"name\":\"collie\",\"types\":[\"border\",\"long hair\"]}]", result.getResponse().getContentAsString());
+    }
 }
