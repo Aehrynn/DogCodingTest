@@ -1,7 +1,7 @@
 # DogCodingTest
 
 
-Spring Boot App based on the spring boot starter application
+Java Spring Boot App based on the spring boot starter application
 
 To Build :
 mvn clean install
@@ -16,5 +16,8 @@ Web user interface access is provided by Swagger : http://18.130.154.67:8080/swa
 This lists every REST operation with descriptions and expected return data
 
 The included POSTMAN collection includes the API endpoints and expected data formats
+
+The spring boot app is deployed manually to the RHEL server (ec2) but is set up as a service, this works due to maven properties are set up for the application to be executable and hooks into the RHEL service settings (start/stop/restart)
+ex: service dogCodingTest start
 
 
